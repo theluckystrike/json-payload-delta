@@ -1,0 +1,21 @@
+.json-payload-delta .jpd-preview {
+    max-height: 38vh;
+    overflow: auto;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+.json-payload-delta .jpd-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.json-payload-delta pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 8px;
+    background: var(--background-secondary);
+}
+
+.json-payload-delta .jpd-error {
+    color: var(--text-error);
+}

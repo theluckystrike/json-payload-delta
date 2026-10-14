@@ -1,0 +1,16 @@
+{
+  "service": "Atlas",
+  "user": {
+    "age": 20,
+    "active": true
+  },
+  "items": [
+    "a",
+    "b"
+  ],
+  "a/b": {
+    "~x": 1
+  },
+  "retired": true,
+  "generatedAt": "2026-10-01"
+}

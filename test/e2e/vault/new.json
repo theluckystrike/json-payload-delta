@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-10-14",
+  "service": "Atlas",
+  "user": {
+    "age": 21,
+    "active": true
+  },
+  "items": [
+    "b",
+    "a"
+  ],
+  "a/b": {
+    "~x": 2
+  },
+  "newField": null
+}

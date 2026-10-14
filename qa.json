@@ -1,0 +1,53 @@
+[
+	{
+		"feature": "sources",
+		"caption": "Choose two saved Atlas payloads from the vault.",
+		"note": "Review.md",
+		"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; p.modal?.close(); p.pro.signOut(); p.openCompare(); const m = p.modal; m.oldPath = 'JSON Payload Delta/old.json'; m.newPath = 'JSON Payload Delta/new.json'; m.reset(); return 'ok'; })()"
+	},
+	{
+		"feature": "changes",
+		"caption": "Compare pointer paths, missing fields, and array indices.",
+		"note": "Review.md",
+		"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; p.modal?.close(); p.pro.signOut(); p.openCompare(); const m = p.modal; m.oldPath = 'JSON Payload Delta/old.json'; m.newPath = 'JSON Payload Delta/new.json'; await m.preview(); return 'ok'; })()"
+	},
+	{
+		"feature": "report",
+		"caption": "Open the report with links to the saved source files.",
+		"note": "Review.md",
+		"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; p.modal?.close(); p.pro.signOut(); p.openCompare(); const m = p.modal; m.oldPath = 'JSON Payload Delta/old.json'; m.newPath = 'JSON Payload Delta/new.json'; await m.preview(); const f = await p.createReport(m.comparison); m.close(); await app.workspace.openLinkText(f.path,'',false); return 'ok'; })()"
+	},
+	{
+		"feature": "profiles",
+		"caption": "Select a named Atlas payload pair for a repeated comparison.",
+		"note": "Review.md",
+		"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; p.modal?.close(); p.pro.signOut(); p.pro.opts.http = async () => ({ status: 200, json: { data: { viewer: { login: 'demo-reader' }, user: { sponsorshipForViewerAsSponsor: { isActive: true, isOneTimePayment: false, tier: { name: '$5 a month', monthlyPriceInCents: 500 } } } } } }); app.secretStorage.setSecret('json-payload-delta-github-token', 'gho_' + '0'.repeat(36)); await p.pro.refreshNow(); await p.saveProfile({name:'Atlas release payload',oldPath:'JSON Payload Delta/old.json',newPath:'JSON Payload Delta/new.json',ignore:['/generatedAt']}); p.openCompare(); const m = p.modal; m.oldPath = 'JSON Payload Delta/old.json'; m.newPath = 'JSON Payload Delta/new.json'; m.profileName = 'Atlas release payload'; m.draftName = m.profileName; m.draftIgnore = '/generatedAt'; m.reset(); return 'ok'; })()",
+		"after": "app.plugins.plugins['json-payload-delta'].modal?.close(); app.plugins.plugins['json-payload-delta'].pro.signOut(); 'ok'"
+	},
+	{
+		"feature": "ignore",
+		"caption": "Ignore the generated timestamp in the saved Atlas profile.",
+		"note": "Review.md",
+		"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; p.modal?.close(); p.pro.signOut(); p.pro.opts.http = async () => ({ status: 200, json: { data: { viewer: { login: 'demo-reader' }, user: { sponsorshipForViewerAsSponsor: { isActive: true, isOneTimePayment: false, tier: { name: '$5 a month', monthlyPriceInCents: 500 } } } } } }); app.secretStorage.setSecret('json-payload-delta-github-token', 'gho_' + '0'.repeat(36)); await p.pro.refreshNow(); await p.saveProfile({name:'Atlas release payload',oldPath:'JSON Payload Delta/old.json',newPath:'JSON Payload Delta/new.json',ignore:['/generatedAt']}); p.openCompare(); const m = p.modal; m.oldPath = 'JSON Payload Delta/old.json'; m.newPath = 'JSON Payload Delta/new.json'; m.profileName = 'Atlas release payload'; m.draftName = m.profileName; m.draftIgnore = '/generatedAt'; m.reset(); await m.preview(); m.contentEl.querySelector('details').open = false; return 'ok'; })()",
+		"after": "app.plugins.plugins['json-payload-delta'].modal?.close(); app.plugins.plugins['json-payload-delta'].pro.signOut(); 'ok'"
+	},
+	{
+		"feature": "json-payload-delta",
+		"caption": "Choose sources, preview changes, and open a new report.",
+		"frames": [
+			{
+				"note": "Review.md",
+				"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; p.modal?.close(); p.pro.signOut(); p.openCompare(); const m = p.modal; m.oldPath = 'JSON Payload Delta/old.json'; m.newPath = 'JSON Payload Delta/new.json'; m.reset(); return 'ok'; })()",
+				"hold": 1500
+			},
+			{
+				"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; await p.modal.preview(); return 'ok'; })()",
+				"hold": 2000
+			},
+			{
+				"eval": "(async () => { const p = app.plugins.plugins['json-payload-delta']; const f = await p.createReport(p.modal.comparison); p.modal.close(); await app.workspace.openLinkText(f.path,'',false); return 'ok'; })()",
+				"hold": 1800
+			}
+		]
+	}
+]

@@ -1,0 +1,531 @@
+{
+  "slug": "json-payload-delta",
+  "module": "products/json-payload-delta/src/delta.ts",
+  "function": "compareText",
+  "cases": [
+    {
+      "name": "Object key order gives no changes",
+      "args": [
+        "{\"a\":1,\"b\":2}",
+        "{\"b\":2,\"a\":1}",
+        []
+      ],
+      "expected": {
+        "rows": [],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Missing to null is added",
+      "args": [
+        "{}",
+        "{\"a\":null}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "added",
+            "path": "/a",
+            "new": null
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Nested age changes",
+      "args": [
+        "{\"user\":{\"age\":20}}",
+        "{\"user\":{\"age\":21}}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/user/age",
+            "old": 20,
+            "new": 21
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Array index swap is two changes",
+      "args": [
+        "[\"a\",\"b\"]",
+        "[\"b\",\"a\"]",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/0",
+            "old": "a",
+            "new": "b"
+          },
+          {
+            "kind": "changed",
+            "path": "/1",
+            "old": "b",
+            "new": "a"
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Slash and tilde use pointer escapes",
+      "args": [
+        "{\"a/b\":{\"~x\":1}}",
+        "{\"a/b\":{\"~x\":2}}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/a~1b/~0x",
+            "old": 1,
+            "new": 2
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Object to number is one change",
+      "args": [
+        "{\"a\":{}}",
+        "{\"a\":0}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/a",
+            "old": {},
+            "new": 0
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Null to missing is removed",
+      "args": [
+        "{\"a\":null}",
+        "{}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "removed",
+            "path": "/a",
+            "old": null
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Null to number is changed",
+      "args": [
+        "{\"a\":null}",
+        "{\"a\":0}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/a",
+            "old": null,
+            "new": 0
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Empty key uses slash",
+      "args": [
+        "{\"\":1}",
+        "{\"\":2}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/",
+            "old": 1,
+            "new": 2
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Root primitive uses empty pointer",
+      "args": [
+        "1",
+        "2",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "",
+            "old": 1,
+            "new": 2
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Array added tail",
+      "args": [
+        "[1]",
+        "[1,null]",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "added",
+            "path": "/1",
+            "new": null
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Array removed tail",
+      "args": [
+        "[1,2]",
+        "[1]",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "removed",
+            "path": "/1",
+            "old": 2
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Prototype names are data",
+      "args": [
+        "{\"__proto__\":1,\"constructor\":2}",
+        "{\"__proto__\":2,\"constructor\":2}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/__proto__",
+            "old": 1,
+            "new": 2
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Repeated keys use last value",
+      "args": [
+        "{\"a\":1,\"a\":2}",
+        "{\"a\":2}",
+        []
+      ],
+      "expected": {
+        "rows": [],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Added object is one value",
+      "args": [
+        "{}",
+        "{\"a\":{\"x\":1}}",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "added",
+            "path": "/a",
+            "new": {
+              "x": 1
+            }
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Ignore path omits its children",
+      "args": [
+        "{\"a\":{\"x\":1},\"ab\":1}",
+        "{\"a\":{\"x\":2},\"ab\":2}",
+        [
+          "/a"
+        ]
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "/ab",
+            "old": 1,
+            "new": 2
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Ignore escaped path",
+      "args": [
+        "{\"a/b\":1,\"x\":0}",
+        "{\"a/b\":2,\"x\":0}",
+        [
+          "/a~1b"
+        ]
+      ],
+      "expected": {
+        "rows": [],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Ignore index",
+      "args": [
+        "[1,2]",
+        "[9,2]",
+        [
+          "/0"
+        ]
+      ],
+      "expected": {
+        "rows": [],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Safe maximum integer",
+      "args": [
+        "9007199254740991",
+        "9007199254740991",
+        []
+      ],
+      "expected": {
+        "rows": [],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Number string remains text",
+      "args": [
+        "\"1e999\"",
+        "\"1e999\"",
+        []
+      ],
+      "expected": {
+        "rows": [],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "HTML and backticks remain string values",
+      "args": [
+        "\"before\"",
+        "\"<img src=\\\"https://example.com/x\\\"> and ```\\n# attack\\n```\"",
+        []
+      ],
+      "expected": {
+        "rows": [
+          {
+            "kind": "changed",
+            "path": "",
+            "old": "before",
+            "new": "<img src=\"https://example.com/x\"> and ```\n# attack\n```"
+          }
+        ],
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Invalid JSON",
+      "function": "parseStrict",
+      "args": [
+        "{\"a\":}"
+      ],
+      "expected": {
+        "error": "Invalid strict JSON."
+      }
+    },
+    {
+      "name": "Nonfinite exponent",
+      "function": "parseStrict",
+      "args": [
+        "1e999"
+      ],
+      "expected": {
+        "error": "Number limit:"
+      }
+    },
+    {
+      "name": "Unsafe positive integer",
+      "function": "parseStrict",
+      "args": [
+        "9007199254740992"
+      ],
+      "expected": {
+        "error": "Number limit:"
+      }
+    },
+    {
+      "name": "Unsafe negative integer",
+      "function": "parseStrict",
+      "args": [
+        "-9007199254740992"
+      ],
+      "expected": {
+        "error": "Number limit:"
+      }
+    },
+    {
+      "name": "Unsafe repeated key",
+      "function": "parseStrict",
+      "args": [
+        "{\"a\":1e999,\"a\":0}"
+      ],
+      "expected": {
+        "error": "Number limit:"
+      }
+    },
+    {
+      "name": "JSON5 is rejected",
+      "function": "parseStrict",
+      "args": [
+        "{'a':1}"
+      ],
+      "expected": {
+        "error": "Invalid strict JSON."
+      }
+    },
+    {
+      "name": "Oversized source",
+      "function": "parseStrict",
+      "args": [
+        {
+          "repeat": " ",
+          "count": 2097153
+        }
+      ],
+      "expected": {
+        "error": "Source exceeds 2 MiB."
+      }
+    },
+    {
+      "name": "Deep source",
+      "function": "parseStrict",
+      "args": [
+        {
+          "depth": 65
+        }
+      ],
+      "expected": {
+        "error": "Source exceeds 64 nesting levels."
+      }
+    },
+    {
+      "name": "Depth 64 is accepted",
+      "function": "parseStrict",
+      "args": [
+        {
+          "depth": 64
+        }
+      ],
+      "expected": {
+        "depth": 64
+      }
+    },
+    {
+      "name": "Excess rows are incomplete",
+      "args": [
+        {
+          "array": 1001,
+          "value": 0
+        },
+        {
+          "array": 1001,
+          "value": 1
+        },
+        []
+      ],
+      "expected": {
+        "count": 1000,
+        "incomplete": true
+      }
+    },
+    {
+      "name": "Exactly 1000 rows are complete",
+      "args": [
+        {
+          "array": 1000,
+          "value": 0
+        },
+        {
+          "array": 1000,
+          "value": 1
+        },
+        []
+      ],
+      "expected": {
+        "count": 1000,
+        "incomplete": false
+      }
+    },
+    {
+      "name": "Offline report uses numbered path and keeps sources",
+      "function": "vault",
+      "args": [
+        "{}",
+        "{\"a\":null}"
+      ],
+      "expected": {
+        "path": "JSON Delta 2.md",
+        "old": "{}",
+        "new": "{\"a\":null}"
+      }
+    },
+    {
+      "name": "Report fences HTML and backticks",
+      "function": "literalReport",
+      "args": [
+        "<img src=\"https://example.com/x\"> and ```\n# attack\n```"
+      ],
+      "expected": {
+        "literal": true,
+        "fenced": true,
+        "sourceLinks": true
+      }
+    }
+  ]
+}
