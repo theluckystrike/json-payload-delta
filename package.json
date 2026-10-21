@@ -1,6 +1,6 @@
 {
 	"name": "json-payload-delta",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"private": true,
 	"description": "Compare two local JSON files and save added, removed, and changed values in a note.",
 	"main": "main.js",

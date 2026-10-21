@@ -5,6 +5,8 @@ import { SPONSORS, bindPro, isPro, resetPro } from './pro';
 import { DEFAULT_SETTINGS, JsonPayloadDeltaSettingTab, normalizeSettings, type JsonPayloadDeltaSettings, type Profile } from './settings';
 import { MAX_BYTES, compareText, report, validPointer, type Delta } from './delta';
 import { CompareModal } from './modal';
+import { setupHello } from './hello/index';
+import WHATS_NEW from './whats-new.json';
 export interface Comparison { delta: Delta; oldPath: string; newPath: string; ignore: string[] }
 export default class JsonPayloadDeltaPlugin extends Plugin {
 	settings: JsonPayloadDeltaSettings = { profiles: [...DEFAULT_SETTINGS.profiles] };
@@ -12,6 +14,8 @@ export default class JsonPayloadDeltaPlugin extends Plugin {
 	modal: CompareModal | null = null;
 	private profileSave: Promise<void> = Promise.resolve();
 	async onload(): Promise<void> {
+		// First: "What's new" reads its state before the settings load (packages/hello). It does not wait.
+		setupHello(this, WHATS_NEW);
 		await this.loadSettings();
 		const pro = createGitHubSponsors(this.app, this.manifest.id, SPONSORS, this);
 		pro.init(); this.pro = pro; bindPro(pro);

@@ -60,6 +60,8 @@ If parsing fails, the dialog shows an error and report creation stays disabled. 
 
 ## Settings
 
+After a minor or major update, this plugin opens one What's new tab in the background. The tab and settings card suggest other NoteMods plugins and Zovo Chat and link to notemods.com for feedback ([privacy](https://notemods.com/privacy/)). The tab sends no data. Turn the tab off in Settings.
+
 The plugin settings contain the GitHub Sponsors controls and a description of the comparison limits. Manage file pairs and ignore paths in the comparison dialog. Blank ignore text means no paths. Use escaped pointer segments for keys that contain a slash or tilde. An empty field name has the path `/`.
 
 Each source can contain up to 2 MiB of UTF-8 text and 64 nested object or array containers. The preview contains at most 1,000 changes. If there are more changes, the preview and report state that the result is incomplete. The count describes the visible rows, not a total count for the source.

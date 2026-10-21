@@ -3,6 +3,7 @@ import { sponsorsSettingItems } from './license/github-obsidian';
 import { PRO_UI } from './pro';
 import { validPointer } from './delta';
 import type JsonPayloadDeltaPlugin from './main';
+import { helloSettingItems } from './hello/settings';
 export interface Profile { name: string; oldPath: string; newPath: string; ignore: string[] }
 export interface JsonPayloadDeltaSettings { profiles: Profile[] }
 export const DEFAULT_SETTINGS: JsonPayloadDeltaSettings = { profiles: [] };
@@ -23,6 +24,11 @@ export function normalizeSettings(saved: unknown): JsonPayloadDeltaSettings {
 export class JsonPayloadDeltaSettingTab extends PluginSettingTab {
 	constructor(app: ConstructorParameters<typeof PluginSettingTab>[0], private owner: JsonPayloadDeltaPlugin) { super(app, owner); }
 	getSettingDefinitions(): SettingDefinitionItem[] {
+		// The product rows, then the "More from NoteMods" card (packages/hello).
+		return [...this.productSettingDefinitions(), ...helloSettingItems()];
+	}
+
+	productSettingDefinitions(): SettingDefinitionItem[] {
 		return [
 			{ name: 'Comparison limits', desc: 'Each file: 2 MiB and 64 nesting levels. A preview shows up to 1,000 changes. Open Compare JSON files to choose sources and manage saved profiles.' },
 			...(this.owner.pro ? sponsorsSettingItems(this.owner.pro, PRO_UI) : []),
