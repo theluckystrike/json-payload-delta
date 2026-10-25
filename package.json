@@ -1,5 +1,6 @@
 {
 	"name": "json-payload-delta",
+	"repository": {"type": "git", "url": "theluckystrike/json-payload-delta.git"},
 	"version": "1.1.0",
 	"private": true,
 	"description": "Compare two local JSON files and save added, removed, and changed values in a note.",
