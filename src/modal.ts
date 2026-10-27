@@ -2,7 +2,7 @@ import { Modal, Setting } from 'obsidian';
 import type JsonPayloadDeltaPlugin from './main';
 import type { Comparison } from './main';
 import { literal, parseIgnore } from './delta';
-import { isPro } from './pro';
+import { isPro, proNotice, PRO_PROFILES } from './pro';
 /** Use one suffix for the paid feature labels. */
 function proName(label: string): string { return `${label} (Pro)`; }
 export class CompareModal extends Modal {
@@ -39,16 +39,19 @@ export class CompareModal extends Modal {
 		new Setting(proEl).setName(proName('Saved file pairs')).addDropdown((d) => {
 			d.addOption('', 'No saved profile');
 			for (const p of this.plugin.settings.profiles) d.addOption(p.name, p.name);
-			d.setValue(this.profileName).setDisabled(!isPro()).onChange((name) => {
+			d.setValue(this.profileName).onChange((name) => {
+				// A free user (a lapsed sponsor with saved pairs) gets the Pro notice. The list shows no profile again.
+				if (!isPro()) { d.setValue(this.profileName); proNotice(PRO_PROFILES); return; }
 				const p = this.plugin.settings.profiles.find((p) => p.name === name);
 				this.profileName = name;
 				if (p) { this.oldPath = p.oldPath; this.newPath = p.newPath; this.draftName = p.name; this.draftIgnore = p.ignore.join('\n'); }
 				this.reset();
 			});
 		});
-		new Setting(proEl).setName(proName('Profile name')).addText((t) => t.setValue(this.draftName).setDisabled(!isPro()).onChange((v) => { this.draftName = v; }));
-		new Setting(proEl).setName(proName('Ignore pointer paths')).setDesc('One path per line. Save the profile to apply these paths and their children.').addTextArea((t) => t.setValue(this.draftIgnore).setDisabled(!isPro()).onChange((v) => { this.draftIgnore = v; }));
-		new Setting(proEl).setName(proName('Save file pair')).addButton((b) => b.setButtonText('Save profile').setDisabled(!isPro() || this.busy).onClick(async () => {
+		new Setting(proEl).setName(proName('Profile name')).addText((t) => t.setValue(this.draftName).onChange((v) => { this.draftName = v; }));
+		new Setting(proEl).setName(proName('Ignore pointer paths')).setDesc('One path per line. Save the profile to apply these paths and their children.').addTextArea((t) => t.setValue(this.draftIgnore).onChange((v) => { this.draftIgnore = v; }));
+		new Setting(proEl).setName(proName('Save file pair')).addButton((b) => b.setButtonText('Save profile').setDisabled(this.busy).onClick(async () => {
+			if (!isPro()) { proNotice(PRO_PROFILES); return; }
 			const revision = ++this.revision;
 			const name = this.draftName.trim();
 			try {

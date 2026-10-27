@@ -1,9 +1,9 @@
 {
 	"id": "json-payload-delta",
 	"name": "JSON Payload Delta",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"changes": [
-		"New Send feedback command. It opens a page where you can report a problem or suggest an idea."
+		"Save profile and the saved file pairs now show how to get Pro, with a Sponsor on GitHub button. Nothing is saved until Pro is on."
 	],
 	"tip": "Key order in an object does not count as a change, so a file with only reordered keys shows no changes.",
 	"thanks": "Hi, I am Michael, a solo developer in Poland. JSON Payload Delta is one of over 100 small plugins that I make. Thank you for using it with your files.",

@@ -1,7 +1,7 @@
 {
 	"id": "json-payload-delta",
 	"name": "JSON Payload Delta",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"minAppVersion": "1.13.4",
 	"description": "Compare two local JSON files and save added, removed, and changed values in a note.",
 	"author": "Michael Lip",
