@@ -1,7 +1,7 @@
 {
 	"id": "json-payload-delta",
 	"name": "JSON Payload Delta",
-	"version": "1.1.2",
+	"version": "1.1.3",
 	"changes": [
 		"The Pro notice of JSON Payload Delta now says that one payment turns on Pro in every NoteMods plugin."
 	],
